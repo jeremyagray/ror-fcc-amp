@@ -21,4 +21,10 @@ This data is easily produced with the Date methods `getTime()` and `toUTCString(
 }
 ```
 
-The plan is simple.  Since this API doesn't have to store data, we don't need to worry with a database or models yet.  We just need to translate the JavaScript we have into some Ruby.  So, we need to implement two `GET` routes (with and without the date string parameter).  To do this, we'll have to create the routes and some code to compute the output and figure out what the Ruby equivalents of the JavaScript `getTime()` and `toUTCString()`.
+The plan is simple.  Since this API doesn't have to store data, we don't need to worry with a database or models yet.  We just need to translate the JavaScript we have into some Ruby.  So, we need to implement two `GET` routes (with and without the date string parameter).  To do this, we'll have to create the routes and some code to compute the output and figure out what the Ruby equivalents of the JavaScript `getTime()` and `toUTCString()`.  First, some background.
+
+# The Express Implementation
+
+Doing this project in express, you will have some code like
+
+```
