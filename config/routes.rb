@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'file_metadata#index'
+
   # Hello endpoint.
   get '/api/hello', to: 'hello#hello'
 
@@ -17,6 +19,9 @@ Rails.application.routes.draw do
   get '/api/users/:_id/logs', to: 'exercise_tracker#getLog'
   get '/api/users/:_id/logs?:limit', to: 'exercise_tracker#getLog'
   get '/api/users/:_id/logs?:from&:to', to: 'exercise_tracker#getLog'
+
+# File metadata.
+  post "/api/fileanalyse", to: "file_metadata#info"
 
   # Time server endpoint.
   get '/api/', to: 'time#time'
