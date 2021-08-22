@@ -1,6 +1,9 @@
 # Header Parser Microservice Project
 
-This really should have been the first project as it is essentially as easy as hello world once you know how to grab the header data.  The route specification is simply `GET /api/whoami` without parameters.  The expected JSON data is
+This really should have been the first project as it is essentially as
+easy as hello world once you know how to grab the header data.  The
+route specification is simply `GET /api/whoami` without parameters.
+The expected JSON data is
 ```
 {
   'ipaddress': 'from remote IP address',
@@ -8,7 +11,8 @@ This really should have been the first project as it is essentially as easy as h
   'software': 'from User-Agent header'
 }
 ```
-A little research will provide the Rails variables with the necessary information.
+A little research will provide the [Rails](https://rubyonrails.org/)
+variables with the necessary information.
 
 ## Routes
 
@@ -49,7 +53,10 @@ class HeaderParserController < ApplicationController
   end
 end
 ```
-a casual web search will provide you with the necessary information about `request`.  Tests are likewise trivial:
+a casual web search will provide you with the necessary information
+about `request`.  These headers are not any different than any other
+framework since they are HTTP headers and not tied to any particular
+framework.  Tests are likewise trivial:
 ```
   test 'should tell me who I am' do
     get '/api/whoami'
@@ -60,7 +67,16 @@ a casual web search will provide you with the necessary information about `reque
     headers.key?('software')
   end
 ```
-Running the local and FreeCodeCamp tests should yield the same all-passing results, unless you have your routes in the wrong order which will cause the FreeCodeCamp tests to fail. Rails, like Express and Django, matches the first matching route.  So if you place `/api/whoami` after `/api/:date` the `date` route will match on `whoami` and it will hit your time server.
+Running the local and [FreeCodeCamp
+tests](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/request-header-parser-microservice)
+should yield the same all-passing results, unless you have your routes
+in the wrong order which will cause the [FreeCodeCamp
+tests](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/request-header-parser-microservice)
+to fail. [Rails](https://rubyonrails.org/), like
+[Express](https://expressjs.com/) and
+[Django](https://www.djangoproject.com/), matches the first matching
+route.  So if you place `/api/whoami` after `/api/:date` the `date`
+route will match on `whoami` and it will hit your time server.
 
 ## Looking Forward
 
