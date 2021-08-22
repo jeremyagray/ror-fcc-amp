@@ -1,8 +1,16 @@
 # URL Shortener Microservice Project
 
-A word of warning before starting:  don't leave this project live on the internet.  Scammers love disguising malicious URLs with shorteners, and this one has no security against such abuse.
+A word of warning before starting: don't leave this project live on
+the internet.  Scammers love disguising malicious URLs with
+shorteners, and this one has no security against such abuse.
 
-Since this project requires saving data for later use, we finally need database access.  For demo projects, it's perfectly fine to use the default, file-based sqlite3 database that's already included.  To use the database, we'll need to generate a model and run a migration in addition to our normal routes and controller generation.
+Since this project requires saving data for later use, we finally need
+database access.  For demo projects, it's perfectly fine to use the
+default, file-based sqlite3 database that's already included.  To use
+the database, we'll need to generate a model and run a migration in
+addition to our normal routes and controller generation.  Just like
+with any other framework, you can choose whichever database you desire
+and their is probably a way to use it with your framework.
 
 ## Specifications
 
@@ -10,11 +18,19 @@ Since this project requires saving data for later use, we finally need database 
 * You can `GET /api/shorturl/:short_url` and redirect to the original URL.
 * Invalid URLs get the response `{ 'error': 'invalid url' }`.
 
-So, like the time server, we need two routes, one with a parameter.  We also need to do some processing to validate the URL.  The project hint suggests using NodeJS's `dns` module in addition to format checking, so we'll do that with some Ruby equivalents.
+So, like the time server, we need two routes, one with a parameter.
+We also need to do some processing to validate the URL.  The project
+hint suggests using [NodeJS's](https://nodejs.org/) `dns` module in
+addition to format checking, so we'll do that with some
+[Ruby](https://www.ruby-lang.org/) equivalents.
 
 ## Model
 
-The model is fairly obvious.  We need a string to hold a URL and an ID number, which Rails provides by default.  Referring to the Rails Getting Started Guide again, we can generate a model with:
+The model is fairly obvious.  We need a string to hold a URL and an ID
+number, which [Rails](https://rubyonrails.org/) provides by default.
+Referring to the [Getting Started with Rails
+Guide](https://guides.rubyonrails.org/getting_started.html) again, we
+can generate a model with:
 ```
 rails generate model Url url:string
 ```
@@ -27,7 +43,10 @@ which outputs
       create      test/models/url_test.rb
       create      test/fixtures/urls.yml
 ```
-which gives us the data migration, a model, an empty test, and some test fixture data.  Feel free to explore these files, but they require no further work from us, other than running the data migration to create the tables in the database:
+which gives us the data migration, a model, an empty test, and some
+test fixture data.  Feel free to explore these files, but they require
+no further work from us, other than running the data migration to
+create the tables in the database:
 ```
 rails db:migrate
 ```
@@ -67,13 +86,13 @@ Completed 422 Unprocessable Entity in 1ms (Allocations: 458)
   
 ActionController::InvalidAuthenticityToken (ActionController::InvalidAuthenticityToken):
 ```
-that basically says it won't process our `POST` request since the hostnames of the request and API don't match, followed with some Ruby complaint about `InvalidAuthenticityToken`.  This looks a lot like some CSRF protection that a typical website needs that would be handled elsewhere for an API.  A little research points to some of the [Rails documentation](https://railsdoc.github.io/classes/ActionController/RequestForgeryProtection.html) with both an explanation and a solution.  It is CSRF protection that is enabled by default (yay!) when using the `ActionController::Base` like we are.  This behavior can be disabled by modifying `app/controllers/application_controller.rb`:
+that basically says it won't process our `POST` request since the hostnames of the request and API don't match, followed with some [Ruby](https://www.ruby-lang.org/) complaint about `InvalidAuthenticityToken`.  This looks a lot like some CSRF protection that a typical website needs that would be handled elsewhere for an API.  A little research points to some of the [Rails documentation](https://railsdoc.github.io/classes/ActionController/RequestForgeryProtection.html) with both an explanation and a solution.  It is CSRF protection that is enabled by default (yay!) when using the `ActionController::Base` like we are.  This behavior can be disabled by modifying `app/controllers/application_controller.rb`:
 ```
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 end
 ```
-And again, wildly dangerous.  This is fine for intermittent demo or toy use, but in production you have to have some way of securing access to your API.  Rerun the FreeCodeCamp tests, and now the first two tests pass, the CORS errors have vanished, and the 422's are gone.  Since we have a partial solution, let's create the Rails tests to test it and keep it working:
+And again, wildly dangerous.  This is fine for intermittent demo or toy use, but in production you have to have some way of securing access to your API.  Rerun the FreeCodeCamp tests, and now the first two tests pass, the CORS errors have vanished, and the 422's are gone.  Since we have a partial solution, let's create the [Rails](https://rubyonrails.org/) tests to test it and keep it working:
 ```
   test 'should return shortened URL' do
     post '/api/shorturl', params: { url: 'http://www.cnn.com/' }
@@ -119,9 +138,21 @@ Running the tests results in expected failures since we don't yet have a `get` m
     end
   end
 ```
-This finishes the `get` method and test.  All that's left is the invalid URL handling.  The tests will try `ftp:/john-doe.org` as an invalid URL.  It's easy to flag since it has only one slash.  The URL validation is the biggest source of problems in the FreeCodeCamp forum.  If you do advanced validation, remember that at a minimum, the URL has a protocol (`http`, `https`, or even `ftp`), the protocol separator (`://`), the hostname (`www.example.net` or similar), and an optional parameter string (`/api/shorturl/5` or variations with route parameters and query strings).  If you hand off anything other than the hostname to NodeJS's `dns.lookup()`, it barfs, as any number of forum posts will attest.
+This finishes the `get` method and test.  All that's left is the
+invalid URL handling.  The tests will try `ftp:/john-doe.org` as an
+invalid URL.  It's easy to flag since it has only one slash.  The URL
+validation is the biggest source of problems in the [FreeCodeCamp
+forum](https://forum.freecodecamp.com/).  If you do advanced
+validation, remember that at a minimum, the URL has a protocol
+(`http`, `https`, or even `ftp`), the protocol separator (`://`), the
+hostname (`www.example.net` or similar; it need not contain `www.`),
+and an optional parameter string (`/api/shorturl/5` or variations with
+route parameters and query strings).  If you hand off anything other
+than the hostname to [NodeJS's](https://nodejs.org/) `dns.lookup()`,
+it barfs, as any number of forum posts will attest.
 
-Let's add some simple validation to the `post` method that checks for one of the three protocols above and the correct separator:
+Let's add some simple validation to the `post` method that checks for
+one of the three protocols above and the correct separator:
 ```
   def new
     if params[:url].match(/^(https?|ftp):\/\//)
@@ -133,8 +164,20 @@ Let's add some simple validation to the `post` method that checks for one of the
     end
   end
 ```
-A little research into URL validation will show that this just scratches the surface, but it's enough to pass both sets of tests.  If you feel compelled to do more, read [this](https://fsharpforfunandprofit.com/posts/property-based-testing/) first.
+A little research into URL validation will show that this just
+scratches the surface, but it's enough to pass both sets of tests.  If
+you feel compelled to do more, read
+[this](https://fsharpforfunandprofit.com/posts/property-based-testing/)
+first.
 
 ## Looking Forward
 
-Now that we can store and retrieve data, we can do anything.  Conceptually, we have basically everything we need to create any website we want, with Rails or Express.  There's a lot of plumbing left to understand (authentication, validation, processing, etc.), but the basics are done.  The next bit of plumbing to tackle is related models, which we'll tackle in the exercise tracker project.  But for now, our tests are all green so we commit, push, and [carry on](exercisetracker.md).
+Now that we can store and retrieve data, we can do anything.
+Conceptually, we have basically everything we need to create any
+website we want, with [Rails](https://rubyonrails.org/) or
+[Express](https://expressjs.com/).  There's a lot of plumbing left to
+understand (authentication, validation, processing, etc.), but the
+basics are done.  The next bit of plumbing to tackle is related
+models, which we'll tackle in the exercise tracker project.  But for
+now, our tests are all green so we commit, push, and [carry
+on](exercisetracker.md).
