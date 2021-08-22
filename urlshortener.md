@@ -137,4 +137,4 @@ A little research into URL validation will show that this just scratches the sur
 
 ## Looking Forward
 
-Now that we can store and retrieve data, we can do anything.  Conceptually, we have basically everything we need to create any website we want, with Rails or Express.  There's a lot of plumbing left to understand (authentication, validation, processing, etc.), but the basics are done.  The next bit of plumbing to tackle is related models, which we'll tackle in the exercise tracker project.  But for now, our tests are all green so we commit, push, and carry on.
+Now that we can store and retrieve data, we can do anything.  Conceptually, we have basically everything we need to create any website we want, with Rails or Express.  There's a lot of plumbing left to understand (authentication, validation, processing, etc.), but the basics are done.  The next bit of plumbing to tackle is related models, which we'll tackle in the exercise tracker project.  But for now, our tests are all green so we commit, push, and [carry on](exercisetracker.md).

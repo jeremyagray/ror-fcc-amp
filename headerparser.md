@@ -64,4 +64,4 @@ Running the local and FreeCodeCamp tests should yield the same all-passing resul
 
 ## Looking Forward
 
-This was an easy one.  Next up is the oft discussed URL shortener, which finally requires data storage and some non-trivial input processing.  Commit, push, and carry on.
+This was an easy one.  Next up is the oft discussed URL shortener, which finally requires data storage and some non-trivial input processing.  Commit, push, and [carry on](urlshortener.md).

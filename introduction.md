@@ -225,4 +225,4 @@ app.use(cors({
   optionSuccessStatus: 200
 }));
 ```
-or we won't pass any [FreeCodeCamp](https://www.freecodecamp.org/) tests and we still have to wire in models, migrations, and a database to replace `mongoose`.  So run ahead and do it yourself or tag along and see the details as we start on the time server.  Just commit and push your code before you go too far.
+or we won't pass any [FreeCodeCamp](https://www.freecodecamp.org/) tests and we still have to wire in models, migrations, and a database to replace `mongoose`.  So run ahead and do it yourself or tag along and see the details as we start on the time server.  Just commit and push your code before you go [too far](timeserver.md).
