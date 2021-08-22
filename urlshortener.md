@@ -6,11 +6,12 @@ shorteners, and this one has no security against such abuse.
 
 Since this project requires saving data for later use, we finally need
 database access.  For demo projects, it's perfectly fine to use the
-default, file-based sqlite3 database that's already included.  To use
-the database, we'll need to generate a model and run a migration in
-addition to our normal routes and controller generation.  Just like
-with any other framework, you can choose whichever database you desire
-and their is probably a way to use it with your framework.
+default, file-based [SQLite](https://www.sqlite.org/) database that's
+already included.  To use the database, we'll need to generate a model
+and run a migration in addition to our normal routes and controller
+generation.  Just like with any other framework, you can choose
+whichever database you desire and there is probably a library to use
+it with your framework.
 
 ## Specifications
 

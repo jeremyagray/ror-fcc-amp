@@ -1,28 +1,56 @@
 # Exercise Tracker Microservice Project
 
-It's finally time to connect two data models.  In the MERN stack, this usually means coding two schemas in `mongoose` with a shared ID and then providing all the code to access and maintain the connections.  The idea is the same everywhere, but with Rails, we just have to tell it the models are connected and Rails will generate the SQL necessary to do all the work.  All we have to do is manipulate the records.
+It's finally time to connect two data models.  In the MERN stack, this
+usually means coding two schemas in `mongoose` with a shared ID and
+then providing all the code to access and maintain the connections.
+The idea is the same everywhere, but with
+[Rails](https://rubyonrails.org/), we just have to tell it the models
+are connected and [Rails](https://rubyonrails.org/) will generate the
+SQL necessary to do all the work.  All we have to do is manipulate the
+records.
 
-## Specifications
+## [Specifications](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
 
-* `POST /api/users` with `username` to create a new user and return `{ 'username': username, '_id': id }`.
+* `POST /api/users` with `username` to create a new user and return `{
+  'username': username, '_id': id }`.
 * `GET /api/users` to get an array of all users, formatted as above.
-`POST /api/users/:_id/exercises` with `description`, `duration`, and an optional `date`, defaulting to now, returning user object with the exercise fields added.
-* `GET request to /api/users/:_id/logs` to retrieve a full exercise log of any user.  The returned response will be the user object with a `log` array of all the exercises added.  Each `log` item has the `description`, `duration`, and `date` properties.  This will include a `count` property representing the number of exercises returned.
-* `GET /api/users/:_id/logs` also accepts `from` and `to` query strings as dates in `yyyy-mm-dd` format and `limit` as an integer of how many logs to send.
+  `POST /api/users/:_id/exercises` with `description`, `duration`, and
+  an optional `date`, defaulting to now, returning user object with the
+  exercise fields added.
+* `GET request to /api/users/:_id/logs` to retrieve a full exercise
+  log of any user.  The returned response will be the user object with
+  a `log` array of all the exercises added.  Each `log` item has the
+  `description`, `duration`, and `date` properties.  This will include
+  a `count` property representing the number of exercises returned.
+* `GET /api/users/:_id/logs` also accepts `from` and `to` query
+  strings as dates in `yyyy-mm-dd` format and `limit` as an integer of
+  how many logs to send.
 
 ### Test Inputs
 
 * `POST /api/users` with `{ 'username': <random string> }`
 * `GET /api/users`
-* `POST /api/users/:_id/exercises` after creating user, with `{ 'username': username, 'description': 'test', 'duration': '60', '_id': _id, 'date': 'Mon Jan 01 1990'}`
-* `GET /api/users/:_id/logs` after creating a user and one exercise record.  This test is repeated for checking both the log and the count.
-* `GET /api/users/:_id/logs` after creating a user and two exercise records, checking for both records in the `from` to `to` range and checking the length with a `limit = 1`.
+* `POST /api/users/:_id/exercises` after creating user, with `{
+  'username': username, 'description': 'test', 'duration': '60',
+  '_id': _id, 'date': 'Mon Jan 01 1990'}`
+* `GET /api/users/:_id/logs` after creating a user and one exercise
+  record.  This test is repeated for checking both the log and the
+  count.
+* `GET /api/users/:_id/logs` after creating a user and two exercise
+  records, checking for both records in the `from` to `to` range and
+  checking the length with a `limit = 1`.
 
-Looking at the specifications, this looks like a user model and controller, two user routes, two user controller methods, one exercise model linked to the user model and a controller, one exercise route, one exercise controller method, and at least one log controller method.
+Looking at the
+[specifications](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker),
+this looks like a user model and controller, two user routes, two user
+controller methods, one exercise model linked to the user model and a
+controller, one exercise route, one exercise controller method, and at
+least one log controller method.
 
 ## Models
 
-The user model only needs a username and an auto-generated id.  Let Rails generate the model:
+The user model only needs a username and an auto-generated id.  Let
+[Rails](https://rubyonrails.org/) generate the model:
 ```
 rails generate model User username:string
 ```
@@ -30,11 +58,15 @@ Similarly with the exercise model:
 ```
 rails generate model Exercise description:text duration:string date:date user:references
 ```
-The `user:references` is the important bit as it establishes the relationship between `User` and `Exercise`.  Don't forget to run the migration to build the tables and schema.
+The `user:references` is the important bit as it establishes the
+relationship between `User` and `Exercise`.  Don't forget to run the
+migration to build the tables and schema.
 
 ## Routes
 
-The routes should be straightforward.  They are very similar to the URL shortener routes but there are more of them.  Let's start with these:
+The routes should be straightforward.  They are very similar to the
+URL shortener routes but there are more of them.  Let's start with
+these:
 ```
  # Exercise Tracker.
   post '/api/users', to: 'exercise_tracker#addUser'
@@ -43,7 +75,9 @@ The routes should be straightforward.  They are very similar to the URL shortene
   post '/api/users/:_id/exercise', to: 'exercise_tracker#addExercise'
   get '/api/users/:_id/logs', to: 'exercise_tracker#getLog'
 ```
-and change them later if necessary.  With these routes, we'll need an `exercise_tracker` controller with `addUser`, `getUsers`, `addExercise`, and `getLog` methods.
+and change them later if necessary.  With these routes, we'll need an
+`exercise_tracker` controller with `addUser`, `getUsers`,
+`addExercise`, and `getLog` methods.
 
 ## Controllers
 
@@ -51,7 +85,10 @@ Let's generate the controller in the usual way and start adding methods.
 ```
 rails generate controller ExerciseTracker --skip-routes
 ```
-This generates the usual files.  Adding the `addUser` method should get us to the point of running the FreeCodeCamp tests against the project.
+This generates the usual files.  Adding the `addUser` method should
+get us to the point of running the [FreeCodeCamp
+tests](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
+against the project.
 ```
   def addUser
     user = User.new({ username: params[:username] })
@@ -59,7 +96,9 @@ This generates the usual files.  Adding the `addUser` method should get us to th
     render json: { 'username': user.username, '_id': user.id }
   end
 ```
-That gets the first two tests passing and good, solid, 404 fails on the rest since they are not implemented.  Let's create a test for `addUser`:
+That gets the first two tests passing and good, solid, 404 fails on
+the rest since they are not implemented.  Let's create a test for
+`addUser`:
 ```
   test 'should create a user' do
     post '/api/users', params: { username: 'bob'}
@@ -106,7 +145,20 @@ ExerciseTrackerControllerTest#test_should_return_a_user_array [/home/runner/ror-
 Expected: 4
   Actual: 2
 ```
-What gives?  Four users?  We only created two in our test, but Rails was being helpful.  It created two users in the fixture data for the `User` model when we generated that.  So, comment out both fixture users in `tests/fixtures/users.yml` or change the expected length.  Now, the Rails tests pass, let's check the FreeCodeCamp tests, and the `GET /api/users`...fails?  Why?  Let's add a `puts users` at the end of `getUsers` or hit the API with a browser to inspect the output, but everything looks fine.  The only thing left to check is the FreeCodeCamp test, and its source says:
+What gives?  Four users?  We only created two in our test, but
+[Rails](https://rubyonrails.org/) was being helpful.  It created two
+users in the fixture data for the `User` model when we generated that.
+So, comment out both fixture users in `tests/fixtures/users.yml` or
+change the expected length.  Now, the
+[Rails](https://rubyonrails.org/) tests pass, let's check the
+[FreeCodeCamp
+tests](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker),
+and the `GET /api/users`...fails?  Why?  Let's add a `puts users` at
+the end of `getUsers` or hit the API with a browser to inspect the
+output, but everything looks fine.  The only thing left to check is
+the [FreeCodeCamp
+test](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/curriculum/challenges/english/05-back-end-development-and-apis/back-end-development-and-apis-projects/exercise-tracker.md),
+and its source says:
 ```
 async (getUserInput) => {
   const url = getUserInput('url');
@@ -121,13 +173,15 @@ async (getUserInput) => {
   }
 };
 ```
-The most important bit is the `assert.isString(data[0]._id);`.  Oops, we sent a number.  Let's rework the relevant bit of the controller:
+The most important bit is the `assert.isString(data[0]._id);`.  Oops,
+we sent a number.  Let's rework the relevant bit of the controller:
 ```
       users.append({ 'username': user.username, '_id': "#{user.id}" })
 ```
 and rerun both sets of tests and the ones that should pass, pass.
 
-Moving on to the exercise records, let's implement the `addExercise` controller method:
+Moving on to the exercise records, let's implement the `addExercise`
+controller method:
 ```
   def addExercise
     user = User.find(params[:_id])
@@ -144,7 +198,9 @@ Moving on to the exercise records, let's implement the `addExercise` controller 
     render json: { :username => user.username, :_id => user.id, :description => ex.description, :duration => ex.duration, :date => date.strftime("%a %b %d %Y") }
   end
 ```
-which gets the correct user, handles the date, creates a new exercise, and returns some JSON (with a formatted date).  Let's write a test too:
+which gets the correct user, handles the date, creates a new exercise,
+and returns some JSON (with a formatted date).  Let's write a test
+too:
 ```
   test 'should create an exercise record' do
     post '/api/users', params: { username: 'bob'}
@@ -165,7 +221,12 @@ which gets the correct user, handles the date, creates a new exercise, and retur
     assert_equal 'Mon Jan 01 1990', data['date']
   end
 ```
-and then run the Rails tests, which pass while the FreeCodeCamp test for this route fails.  What now?  Well, if you closely examine the expected object in the FreeCodeCamp test
+and then run the [Rails](https://rubyonrails.org/) tests, which pass
+while the [FreeCodeCamp
+test](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
+for this route fails.  What now?  Well, if you closely examine the
+expected object in the [FreeCodeCamp
+test](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/curriculum/challenges/english/05-back-end-development-and-apis/back-end-development-and-apis-projects/exercise-tracker.md)
 ```
     const expected = {
       username,
@@ -175,17 +236,26 @@ and then run the Rails tests, which pass while the FreeCodeCamp test for this ro
       date: 'Mon Jan 01 1990'
     };
 ```
-you'll notice that `duration` is an integer.  Easy to miss and easy to fix.  First, make the Rails test fail if it's not an integer.
+you'll notice that `duration` is an integer.  Easy to miss and easy to
+fix.  First, make the [Rails](https://rubyonrails.org/) test fail if
+it's not an integer.
 ```
     assert_equal 60, data['duration']
 ```
-Rerun the Rails tests to make sure it fails, then fix the controller:
+Rerun the [Rails](https://rubyonrails.org/) tests to make sure it
+fails, then fix the controller:
 ```
     render json: { :username => user.username, :_id => user.id, :description => ex.description, :duration => ex.duration.to_i, :date => date.strftime("%a %b %d %Y") }
 ```
-Notice the `to_i` method on `duration`, which converts it to an integer.  Rerun the Rails tests to verify passing, then rerun the FreeCodeCamp test to verify those.
+Notice the `to_i` method on `duration`, which converts it to an
+integer.  Rerun the [Rails](https://rubyonrails.org/) tests to verify
+passing, then rerun the [FreeCodeCamp
+test](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
+to verify those.
 
-Now on to the log route.  One controller method should handle all the log routes, but will have to act conditionally on the three parameters.  First, let's get a test that looks good:
+Now on to the log route.  One controller method should handle all the
+log routes, but will have to act conditionally on the three
+parameters.  First, let's get a test that looks good:
 ```
   test 'should return an exercise log' do
     post '/api/users', params: { username: 'bob'}
@@ -230,7 +300,12 @@ This test should cover the basic log.  Now, a controller method:
     render json: log
   end
 ```
-This is the basic version with no filtering or limit, but it should have the correct format.  Run both tests, and everything passes except the filter/limit test.  Let's create the filter and limit test using the FreeCodeCamp test as an example:
+This is the basic version with no filtering or limit, but it should
+have the correct format.  Run both tests, and everything passes except
+the filter/limit test.  Let's create the filter and limit test using
+the [FreeCodeCamp
+test](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/curriculum/challenges/english/05-back-end-development-and-apis/back-end-development-and-apis-projects/exercise-tracker.md)
+as an example:
 ```
   test 'should return a filtered exercise log' do
     post '/api/users', params: { username: 'bob'}
@@ -307,4 +382,19 @@ It's the same method as before, except with checks for the existence of the thre
 
 ## Looking Forward
 
-Again, we follow the same basic process and let Rails do as much work as possible and just turn specifications into code in fairly straightforward ways.  The related models weren't the challenge here, it was formatting the JSON to match expectations and the common integer or string problem that happens quite frequently.  And again, we've written less code than the Node or Django versions of this project and Rails has generated more, but in the end, the projects would all have similar levels of code, files, and complexity regardless of implementation.  Next up is the File Metadata project, a much simpler project as long as we can figure out how to compute the metadata.  With green tests finally, commit, push, and on to the [last project](filemetadata.md).
+Again, we follow the same basic process and let
+[Rails](https://rubyonrails.org/) do as much work as possible and just
+turn
+[specifications](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
+into code in fairly straightforward ways.  The related models weren't
+the challenge here, it was formatting the JSON to match expectations
+and the common integer or string problem that happens quite
+frequently.  And again, we've written less code than the
+[NodeJS](https://nodejs.org/) or
+[Django](https://www.djangoproject.com/) versions of this project and
+[Rails](https://rubyonrails.org/) has generated more, but in the end,
+the projects would all have similar levels of code, files, and
+complexity regardless of implementation.  Next up is the file metadata
+project, a much simpler project as long as we can figure out how to
+compute the metadata.  With green tests finally, commit, push, and on
+to the [last project](filemetadata.md).
