@@ -14,14 +14,16 @@ records.
 * `POST /api/users` with `username` to create a new user and return `{
   'username': username, '_id': id }`.
 * `GET /api/users` to get an array of all users, formatted as above.
-  `POST /api/users/:_id/exercises` with `description`, `duration`, and
+* `POST /api/users/:_id/exercises` with `description`, `duration`, and
   an optional `date`, defaulting to now, returning user object with the
   exercise fields added.
 * `GET request to /api/users/:_id/logs` to retrieve a full exercise
   log of any user.  The returned response will be the user object with
   a `log` array of all the exercises added.  Each `log` item has the
-  `description`, `duration`, and `date` properties.  This will include
-  a `count` property representing the number of exercises returned.
+  `description` (type string), `duration` (type number), and `date`
+  (type string, from `Date().dateString()`) properties.  This will
+  include a `count` property representing the number of exercises
+  returned.
 * `GET /api/users/:_id/logs` also accepts `from` and `to` query
   strings as dates in `yyyy-mm-dd` format and `limit` as an integer of
   how many logs to send.
@@ -217,8 +219,10 @@ too:
     assert_equal 'bob', data['username']
     assert_equal user['_id'], data['_id']
     assert_equal 'test', data['description']
+    assert data['description'].is_a?(String)
     assert_equal '60', data['duration']
     assert_equal 'Mon Jan 01 1990', data['date']
+    assert data['date'].is_a?(String)
   end
 ```
 and then run the [Rails](https://rubyonrails.org/) tests, which pass
@@ -277,11 +281,13 @@ parameters.  First, let's get a test that looks good:
 
     log['log'].each do |ex|
       assert_equal 'test', ex['description']
-      assert_equal '60', ex['duration']
+      assert_equal 60, ex['duration']
     end
 
     assert_equal 'Mon Jan 01 1990', log['log'][0]['date']
+    assert log['log'][0]['date'].is_a?(String)
     assert_equal 'Tue Jan 02 1990', log['log'][1]['date']
+    assert log['log'][1]['date'].is_a?(String)
   end
 ```
 This test should cover the basic log.  Now, a controller method:
