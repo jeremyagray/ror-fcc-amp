@@ -37,6 +37,7 @@ class ExerciseTrackerControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'test', data['description']
     assert_equal 60, data['duration']
     assert_equal 'Mon Jan 01 1990', data['date']
+    assert data['date'].is_a?(String)
   end
 
   test 'should return an exercise log' do
@@ -59,11 +60,13 @@ class ExerciseTrackerControllerTest < ActionDispatch::IntegrationTest
 
     log['log'].each do |ex|
       assert_equal 'test', ex['description']
-      assert_equal '60', ex['duration']
+      assert_equal 60, ex['duration']
     end
 
     assert_equal 'Mon Jan 01 1990', log['log'][0]['date']
+    assert log['log'][0]['date'].is_a?(String)
     assert_equal 'Tue Jan 02 1990', log['log'][1]['date']
+    assert log['log'][1]['date'].is_a?(String)
   end
 
   test 'should return a filtered exercise log' do

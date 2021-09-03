@@ -12,8 +12,6 @@ class ExerciseTrackerController < ApplicationController
       users << { :username => user.username, :_id => user.id.to_s }
     end
 
-    # puts "users: #{users}"
-    # puts json: users
     render json: users
   end
 
@@ -44,7 +42,7 @@ class ExerciseTrackerController < ApplicationController
       if params[:to] and ex.date > Date.parse(params[:to])
         next
       end
-      log[:log] << { :description => ex.description, :duration => ex.duration, :date => ex.date.strftime("%a %b %d %Y") }
+      log[:log] << { :description => ex.description, :duration => ex.duration.to_i, :date => ex.date.strftime("%a %b %d %Y") }
     end
 
     if params[:limit]
